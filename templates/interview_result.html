@@ -1,0 +1,8 @@
+<h2>Interview Completed!</h2>
+<p>Your final score is: {{ score }}%</p>
+
+{% if score >= 75 %}
+    <p>✅ Congratulations! You passed the interview!</p>
+{% else %}
+    <p>❌ You did not pass the interview. Please try again!</p>
+{% endif %}

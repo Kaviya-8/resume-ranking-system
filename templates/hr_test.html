@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HR Voice Interview</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #eef2f5;
+            font-family: Arial, sans-serif;
+        }
+        .chat-box {
+            max-width: 700px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .avatar {
+            width: 100px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        .conversation {
+            margin-top: 20px;
+            height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .user, .agent {
+            margin-bottom: 15px;
+        }
+        .agent { color: #0d6efd; text-align: left; }
+        .user { color: #198754; text-align: right; }
+        .btn { margin-top: 10px; }
+        #resultBtn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="chat-box text-center">
+    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Virtual HR Agent" class="avatar shadow" style="border: 4px solid #0d6efd;">
+    <h4>Virtual HR Agent</h4>
+    <div class="conversation" id="chatLog"></div>
+    <button class="btn btn-primary" onclick="startInterview()">Start Voice Interview 🎤</button>
+    <button class="btn btn-warning" onclick="listenForAnswer()">🎙️ Retry Listening</button>
+    <a href="/hr_summary" class="btn btn-success" id="resultBtn">📊 View Interview Summary</a>
+</div>
+
+<script>
+    let currentQuestion = "";
+    let recognitionActive = false;
+    const chatLog = document.getElementById('chatLog');
+    const resultBtn = document.getElementById('resultBtn');
+    let recognition;
+
+    function appendMessage(role, text) {
+        const msg = document.createElement('div');
+        msg.className = role;
+        msg.innerText = text;
+        chatLog.appendChild(msg);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function speak(text, callback) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.onend = () => {
+            if (callback) callback();
+        };
+        speechSynthesis.speak(utterance);
+    }
+
+    function getNextQuestion() {
+        fetch('/get_question')
+            .then(res => res.json())
+            .then(data => {
+                if (data.done) {
+                    appendMessage('agent', data.message);
+                    speak(data.message);
+                    resultBtn.style.display = 'inline-block';
+                } else {
+                    currentQuestion = data.question;
+                    appendMessage('agent', currentQuestion);
+                    speak(currentQuestion, () => {
+                        setTimeout(() => listenForAnswer(), 500);
+                    });
+                }
+            });
+    }
+
+    function listenForAnswer() {
+        if (recognitionActive) return;
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            appendMessage('agent', '❌ Your browser does not support speech recognition. Please try Chrome.');
+            return;
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.continuous = false;
+
+        recognitionActive = true;
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript.trim();
+            appendMessage('user', transcript);
+            submitAnswer(transcript);
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            let errorMessage = `[Speech error: ${event.error}]`;
+
+            switch (event.error) {
+                case 'no-speech':
+                    errorMessage = "⚠️ No speech detected. Please try again.";
+                    break;
+                case 'audio-capture':
+                    errorMessage = "🎙️ Microphone not found. Please check your mic settings.";
+                    break;
+                case 'not-allowed':
+                    errorMessage = "🔒 Microphone access was denied.";
+                    break;
+            }
+
+            appendMessage('agent', errorMessage);
+            submitAnswer(""); // optional: or allow retry
+        };
+
+        recognition.onend = () => {
+            recognitionActive = false;
+        };
+
+        recognition.start();
+    }
+
+    function submitAnswer(answer) {
+        fetch('/submit_answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answer: answer })
+        }).then(() => {
+            setTimeout(getNextQuestion, 1000);
+        });
+    }
+
+    function startInterview() {
+        appendMessage('agent', "🎤 Initializing virtual interview...");
+        getNextQuestion();
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Designation Not Found</title>
+    <!-- ✅ Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: none;
+            background-color: #ffffff;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        h2 {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 class="text-center mb-4">⚠️ Designation Not Found</h2>
+    <p>Sorry, the designation "<strong>{{ designation }}</strong>" is not available in our database.</p>
+    
+    <p>Please select from the available designations:</p>
+    <ul class="list-group mb-4">
+        {% for designation in available_designations %}
+            <li class="list-group-item">{{ designation }}</li>
+        {% endfor %}
+    </ul>
+    
+    <div class="text-center">
+        <a href="{{ url_for('candidate') }}" class="btn btn-primary">🔙 Try Again</a>
+    </div>
+</div>
+
+<!-- ✅ Bootstrap JS (Optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

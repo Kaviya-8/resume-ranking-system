@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="height: 70vh;">
+    <div class="text-center">
+        <h1 class="mb-4">Welcome to Resume Ranking System</h1>
+        <div class="btn-group">
+            <a href="{{ url_for('candidate') }}" class="btn btn-primary btn-lg mr-2">Candidate</a>
+            <a href="{{ url_for('hr') }}" class="btn btn-secondary btn-lg">HR</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

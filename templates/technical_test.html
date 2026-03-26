@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        #code-output {
+            white-space: pre-line;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Technical Test</h2>
+    <form action="{{ url_for('submit_answers') }}" method="POST" id="technical-test-form">
+        <input type="hidden" name="test_type" value="technical">
+
+        <!-- ✅ Multiple-Choice Questions -->
+        {% set questions = [
+            {"id": "q1", "question": "What is the time complexity of binary search?", "options": ["O(n)", "O(log n)", "O(n log n)", "O(1)"]},
+            {"id": "q2", "question": "Which data structure uses LIFO (Last In, First Out)?", "options": ["Queue", "Stack", "Linked List", "Array"]},
+            {"id": "q3", "question": "What does SQL stand for?", "options": ["Structured Query Language", "Simple Query Language", "System Query Language", "None"]},
+            {"id": "q4", "question": "Which sorting algorithm is fastest for a nearly sorted array?", "options": ["Quick Sort", "Merge Sort", "Insertion Sort", "Bubble Sort"]}
+        ] %}
+
+        {% for question in questions %}
+            <div class="question">
+                <p><strong>{{ loop.index }}. {{ question['question'] }}</strong></p>
+                {% for option in question['options'] %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="{{ question['id'] }}_{{ loop.index }}" name="{{ question['id'] }}" value="{{ option }}" required>
+                        <label class="form-check-label" for="{{ question['id'] }}_{{ loop.index }}">{{ option }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <!-- ✅ Coding Question -->
+        <div class="question">
+            <p><strong>5. Write a program to find the factorial of a given number.</strong></p>
+            <label for="language">Choose a programming language:</label>
+            <select class="form-select" name="language" id="language" required>
+                <option value="python">Python</option>
+                <option value="c">C</option>
+                <option value="java">Java</option>
+            </select>
+            <br>
+            <textarea class="form-control" id="code_solution" name="code_solution" placeholder="Write your code here..." required></textarea>
+            <br>
+
+            <!-- ✅ Run Code Button -->
+            <button type="button" id="run-button" class="btn btn-secondary" onclick="runCode()">Run Code</button>
+            <p><strong>Output:</strong> <span id="code-output"></span></p>
+        </div>
+
+        <!-- ✅ Submit Test Button -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<script>
+    function runCode() {
+        const language = document.getElementById("language").value.trim();
+        const code = document.getElementById("code_solution").value.trim();
+        const outputDiv = document.getElementById("code-output");
+        const runButton = document.getElementById("run-button");
+
+        console.log("[DEBUG] Captured Language:", language);
+        console.log("[DEBUG] Captured Code:", code);
+
+        if (!language || !code) {
+            outputDiv.innerHTML = "<strong>⚠️ Please select a language and enter the code.</strong>";
+            return;
+        }
+
+        outputDiv.innerHTML = "<strong>⏳ Running code... Please wait.</strong>";
+        runButton.disabled = true;
+
+        fetch("/run_code", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ language: language, code: code })
+        })
+        .then(response => {
+            console.log("[DEBUG] Raw Response:", response);
+
+            if (response.redirected) {
+                console.log("[DEBUG] Redirecting to:", response.url);
+                window.location.href = response.url;  // ✅ Redirect if necessary
+                return;
+            }
+
+            return response.json();  // Parse JSON response if no redirect
+        })
+        .then(data => {
+            if (!data) return; // Prevent errors if redirected
+
+            console.log("[DEBUG] Server Response:", data);
+
+            if (data.status === "success") {
+                outputDiv.innerHTML = `<strong>✅ Output:</strong> <pre>${data.output || "Code executed successfully."}</pre>`;
+            } else {
+                outputDiv.innerHTML = `<strong>❌ Error:</strong> <pre>${data.message || "Unknown error occurred."}</pre>`;
+            }
+        })
+        .catch(error => {
+            console.error("[ERROR] Fetch Failed:", error);
+            outputDiv.innerHTML = `<strong>⚠️ Error while executing code:</strong> <pre>${error.message || "Unable to execute code."}</pre>`;
+        })
+        .finally(() => {
+            runButton.disabled = false;  // ✅ Re-enable button
+        });
+    }
+</script>
+
+
+</body>
+</html>

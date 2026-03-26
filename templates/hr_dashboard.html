@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<div class="container mt-5">
+    <h2 class="mb-4">HR Dashboard</h2>
+
+    <!-- Filter Form -->
+    <form method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <select name="designation" class="form-control">
+                    <option value="">All Designations</option>
+                    {% for des in designations %}
+                        <option value="{{ des }}" {% if des == request.args.get('designation') %}selected{% endif %}>
+                            {{ des }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="min_score" class="form-control" placeholder="Minimum Score" value="{{ request.args.get('min_score', '') }}">
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="date" class="form-control" value="{{ request.args.get('date', '') }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Candidate List -->
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Designation</th>
+                <th>Score</th>
+                <th>Uploaded At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in candidates %}
+                <tr>
+                    <td>{{ candidate.name }}</td>
+                    <td>{{ candidate.designation }}</td>
+                    <td>{{ candidate.score }}</td>
+                    <td>{{ candidate.uploaded_at }}</td>
+                    <td>
+                        <a href="{{ url_for('download_file', filename=candidate['resume_path']) }}" 
+                        class="btn btn-success">
+                        📥 Download Resume
+                        </a>
+                </td>
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

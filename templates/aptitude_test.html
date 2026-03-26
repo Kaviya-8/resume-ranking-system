@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Aptitude Test</h2>
+    <form action="/submit_answers" method="POST">
+        <input type="hidden" name="test_type" value="aptitude">
+        <!-- Question 1 -->
+        <div class="question">
+            <p>1. What is 15 + 30?</p>
+            <div class="options">
+                <label><input type="radio" name="answers_0" value="40"> 40</label>
+                <label><input type="radio" name="answers_0" value="45"> 45</label>
+                <label><input type="radio" name="answers_0" value="50"> 50</label>
+                <label><input type="radio" name="answers_0" value="35"> 35</label>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="question">
+            <p>2. If a train travels 60 km in an hour, how far will it travel in 3.5 hours?</p>
+            <div class="options">
+                <label><input type="radio" name="answers_1" value="180"> 180 km</label>
+                <label><input type="radio" name="answers_1" value="200"> 200 km</label>
+                <label><input type="radio" name="answers_1" value="210"> 210 km</label>
+                <label><input type="radio" name="answers_1" value="220"> 220 km</label>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="question">
+            <p>3. What is the next number in the series: 2, 6, 12, 20, ...?</p>
+            <div class="options">
+                <label><input type="radio" name="answers_2" value="28"> 28</label>
+                <label><input type="radio" name="answers_2" value="30"> 30</label>
+                <label><input type="radio" name="answers_2" value="32"> 32</label>
+                <label><input type="radio" name="answers_2" value="34"> 34</label>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="question">
+            <p>4. A car runs at 50 km/h. How much time will it take to cover 300 km?</p>
+            <div class="options">
+                <label><input type="radio" name="answers_3" value="5"> 5 hours</label>
+                <label><input type="radio" name="answers_3" value="6"> 6 hours</label>
+                <label><input type="radio" name="answers_3" value="7"> 7 hours</label>
+                <label><input type="radio" name="answers_3" value="8"> 8 hours</label>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="question">
+            <p>5. If the price of an item is reduced by 20%, what is the new price if the original price was $100?</p>
+            <div class="options">
+                <label><input type="radio" name="answers_4" value="70"> $70</label>
+                <label><input type="radio" name="answers_4" value="75"> $75</label>
+                <label><input type="radio" name="answers_4" value="80"> $80</label>
+                <label><input type="radio" name="answers_4" value="85"> $85</label>
+            </div>
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+</body>
+</html>

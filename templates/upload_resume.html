@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Candidate Upload{% endblock %}
+
+{% block content %}
+<div class="card shadow-lg">
+    <div class="card-body">
+        <h3 class="card-title text-center mb-4">Upload Your Resume</h3>
+        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required />
+            </div>
+            <div class="form-group">
+                <label for="designation">Applying for Designation:</label>
+                <input type="text" class="form-control" id="designation" name="designation" required />
+            </div>
+            <div class="form-group">
+                <label for="resume">Upload Resume (PDF):</label>
+                <input type="file" class="form-control-file" id="resume" name="resume" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

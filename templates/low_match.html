@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Low Match{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<div class="low-match-container">
+    <h2 class="low-match-heading">⚠️ Your Resume Match is Low: <span>{{ (match_score * 1)|round(2) }}%</span></h2>
+    
+    <div class="low-match-card">
+        <h3>🚀 Skills to Improve:</h3>
+        <ul class="skill-list">
+            {% for skill in missing_skills %}
+                <li>{{ skill }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="low-match-btn-container">
+        <a href="{{ url_for('candidate') }}" class="btn-primary">🔁 Try Again</a>
+    </div>
+</div>
+{% endblock %}
